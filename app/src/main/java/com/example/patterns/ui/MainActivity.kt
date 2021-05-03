@@ -1,22 +1,16 @@
 package com.example.patterns.ui
 
 import android.os.Bundle
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import com.example.patterns.R
+import com.example.patterns.base.BaseActivity
 import com.example.patterns.dagger.App
-import com.example.patterns.domain.factory.DeveloperCreator
 import com.example.patterns.domain.factory.Employee
-import com.example.patterns.domain.factory.EmployeeCreator
-import com.example.patterns.domain.factory.QaEngineerCreator
 import com.example.patterns.presentation.MainPresenter
-import com.github.javafaker.Faker
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.patterns.presentation.MainView
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
-
-    private val team: MutableList<Employee> = mutableListOf()
+class MainActivity : BaseActivity(), MainView {
 
     @Inject
     lateinit var presenter: MainPresenter
@@ -27,56 +21,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        presenter.poof()
-        initViews()
+        presenter.loadEmployees()
     }
 
-    private fun initViews() {
-
-        createTeamButton.setOnClickListener {
-            createDevelopers()
-            createQaEngineers()
-        }
-
-        workSlavesButton.setOnClickListener {
-            if (team.isEmpty()) {
-                Log.i("TAG", "MainActivity: team is empty")
-            } else {
-                team.forEach {
-                    Log.i("TAG", "MainActivity: ${it.name} ${it.age}")
-                    it.doWork()
-                }
-            }
-        }
+    override fun showEmployees(list: List<Employee>) {
+        Toast.makeText(this, list.toString(), Toast.LENGTH_SHORT).show()
     }
-
-    private fun createDevelopers() {
-        val employeeCreator = DeveloperCreator()
-        val number = getRandomNumber()
-
-        createEmployees(employeeCreator, number)
-    }
-
-    private fun createQaEngineers() {
-        val qaEngineerCreator = QaEngineerCreator()
-        val number = getRandomNumber()
-
-        createEmployees(qaEngineerCreator, number)
-    }
-
-    private fun createEmployees(creator: EmployeeCreator, count: Int) {
-        for (i in 1..count) {
-            val employee = creator.createEmployee(name = getRandomName(), age = getRandomAge())
-            team.add(employee)
-        }
-    }
-
-    private fun getRandomName(): String =
-        Faker().funnyName().name()
-
-    private fun getRandomAge(): Int =
-        Faker().number().numberBetween(18, 99)
-
-    private fun getRandomNumber(): Int =
-        Faker().number().numberBetween(1, 100)
 }
