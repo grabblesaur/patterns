@@ -3,20 +3,20 @@ package com.example.patterns.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.example.patterns.presentation.MainPresenter
 import com.example.patterns.R
 import com.example.patterns.dagger.App
-import com.example.patterns.factory.DeveloperCreator
-import com.example.patterns.factory.Employee
-import com.example.patterns.factory.QaEngineerCreator
+import com.example.patterns.domain.factory.DeveloperCreator
+import com.example.patterns.domain.factory.Employee
+import com.example.patterns.domain.factory.EmployeeCreator
+import com.example.patterns.domain.factory.QaEngineerCreator
+import com.example.patterns.presentation.MainPresenter
 import com.github.javafaker.Faker
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    private val developers: MutableList<Employee> = mutableListOf()
-    private val qaEngineers: MutableList<Employee> = mutableListOf()
+    private val team: MutableList<Employee> = mutableListOf()
 
     @Inject
     lateinit var presenter: MainPresenter
@@ -39,14 +39,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         workSlavesButton.setOnClickListener {
-            if (developers.isEmpty() && qaEngineers.isEmpty()) {
-                Log.i("TAG", "MainActivity: maybe its a weekend")
+            if (team.isEmpty()) {
+                Log.i("TAG", "MainActivity: team is empty")
             } else {
-                developers.forEach {
-                    Log.i("TAG", "MainActivity: $it")
-                }
-                qaEngineers.forEach {
-                    Log.i("TAG", "MainActivity: $it")
+                team.forEach {
+                    Log.i("TAG", "MainActivity: ${it.name} ${it.age}")
+                    it.doWork()
                 }
             }
         }
@@ -56,27 +54,20 @@ class MainActivity : AppCompatActivity() {
         val employeeCreator = DeveloperCreator()
         val number = getRandomNumber()
 
-        for (i in 1..number) {
-            developers.add(
-                employeeCreator.createEmployee(
-                    name = getRandomName(),
-                    age = getRandomAge()
-                )
-            )
-        }
+        createEmployees(employeeCreator, number)
     }
 
     private fun createQaEngineers() {
         val qaEngineerCreator = QaEngineerCreator()
         val number = getRandomNumber()
 
-        for (i in 1..number) {
-            qaEngineers.add(
-                qaEngineerCreator.createEmployee(
-                    name = getRandomName(),
-                    age = getRandomAge()
-                )
-            )
+        createEmployees(qaEngineerCreator, number)
+    }
+
+    private fun createEmployees(creator: EmployeeCreator, count: Int) {
+        for (i in 1..count) {
+            val employee = creator.createEmployee(name = getRandomName(), age = getRandomAge())
+            team.add(employee)
         }
     }
 

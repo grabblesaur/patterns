@@ -1,4 +1,4 @@
-package com.example.patterns.factory
+package com.example.patterns.domain.factory
 
 abstract class EmployeeCreator {
 

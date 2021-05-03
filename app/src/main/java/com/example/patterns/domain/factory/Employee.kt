@@ -1,10 +1,10 @@
-package com.example.patterns.factory
+package com.example.patterns.domain.factory
 
 import android.util.Log
 
 abstract class Employee(
-        private val name: String,
-        private val age: Int
+    val name: String,
+    val age: Int
 ) {
 
     abstract fun doLunch()
