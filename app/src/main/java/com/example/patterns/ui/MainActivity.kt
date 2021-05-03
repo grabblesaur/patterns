@@ -1,23 +1,33 @@
-package com.example.patterns
+package com.example.patterns.ui
 
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.patterns.presentation.MainPresenter
+import com.example.patterns.R
+import com.example.patterns.dagger.App
 import com.example.patterns.factory.DeveloperCreator
 import com.example.patterns.factory.Employee
 import com.example.patterns.factory.QaEngineerCreator
 import com.github.javafaker.Faker
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
     private val developers: MutableList<Employee> = mutableListOf()
     private val qaEngineers: MutableList<Employee> = mutableListOf()
 
+    @Inject
+    lateinit var presenter: MainPresenter
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        (applicationContext as App).appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        presenter.poof()
         initViews()
     }
 
